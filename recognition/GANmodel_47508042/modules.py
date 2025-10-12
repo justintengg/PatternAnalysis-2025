@@ -12,7 +12,7 @@ class Encoder(nn.Module):
             nn.ReLU(True),
             nn.Conv2d(hidden, z_channels, 3, 1, 1),
         )
-        
+
     def forward(self, x):
         return self.enc(x)
 
