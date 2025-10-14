@@ -73,4 +73,17 @@ class VectorQuantizer(nn.Module):
         encoding_indices = encoding_indices.view(z.shape[0], z.shape[2], z.shape[3])
         return quantized, loss, encoding_indices
 
+class VQVAE(nn.Module):
+    def __init__(self, in_ch=1, hidden=128, z_channels=64, num_embeddings=512, embedding_dim=64, beta=0.25):
+        super().__init__()
+        assert z_channels == embedding_dim
+        self.encoder = Encoder(in_ch, hidden, z_channels)
+        self.vq = VectorQuantizer(num_embeddings=num_embeddings, embedding_dim=embedding_dim, beta=beta)
+        self.decoder = Decoder(in_ch, hidden, z_channels)
 
+    def forward(self, x):
+        z_e = self.encoder(x)
+        quantized, vq_loss, indices = self.vq(z_e)
+        x_recon = self.decoder(quantized)
+        return x_recon, vq_loss, indices
+    
