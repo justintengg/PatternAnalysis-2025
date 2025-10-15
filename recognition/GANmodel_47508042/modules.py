@@ -86,4 +86,3 @@ class VQVAE(nn.Module):
         quantized, vq_loss, indices = self.vq(z_e)
         x_recon = self.decoder(quantized)
         return x_recon, vq_loss, indices
-    

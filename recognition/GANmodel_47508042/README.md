@@ -1,15 +1,23 @@
 # Pattern Recognition - Generative Model using VQVAE
 
-This project uses VQVAE to create a generative model of the HipMRI Study on Prostate Cancer. Accuracy of this model is
-measured to be over 0.6.
+## Overview
+This project uses VQVAE to create a generative model of the HipMRI Study on Prostate Cancer. The goal is to produce
+reasonably clear images and reach SSIM > 0.6 on testing.
 
-# Author
-* Justin Teng - 47508042
+## Files
+ - 'dataset.py' - Encoder, Decoder, VectorQuantizer, VQVAE model
+ - 'modules.py' - 'HipMRIDataset' loader
+ - 'predict.py' - load best model and produce reconstructions
+ - 'train.py' -  training loop, validation, checkpointing, plots
 
-# Table of Contents
-1. Project Highlights
+## Requirements
+- Python 3.8+
+- PyTorch
+- torchvision
+- matplotlib
+- scikit-image
+- numpy
 
-
-# Project Highlights
-
-# Authors and Acknowledgements
+Install:
+```bash
+pip install torch torchvision matplotlib scikit-image numpy
