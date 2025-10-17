@@ -48,3 +48,24 @@ class HipMRIDataset(Dataset):
                 if fn.lower().endswith(exists):
                     files.append(os.path.join(self.root_dir, fn))
         return sorted(files)
+
+    def __len__(self):
+        return len(self.index_map)
+
+    def __getitem__(self, index):
+        file_index, slice_index = self.index_map[index]
+        path = self.files[file_index]
+        vol = nib.load(path).get_fdata()
+        min, max = vol.min(), vol.max()
+        if max - min < 1e-8:
+            norm = np.zeros_like(vol, dtype=np.float32)
+        else:
+            norm = (vol - min) / (max - min)
+
+        slice2d = norm[:, :, slice_index]
+        # convert to uint8 image then to PIL so transform works reliably
+        img = Image.fromarray((slice2d * 255).astype(np.uint8))
+        if self.transform:
+            img = self.transform(img)  # tensor in [0,1}, shape (C,H,W)
+        return img
+
