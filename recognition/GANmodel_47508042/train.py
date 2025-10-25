@@ -11,7 +11,7 @@ from dataset import HipMRIDataset
 from utils import ensure_dir, save_pair_grid, batch_ssim
 
 def train_loop(args):
-    device = torch.device('cuda' if torch.cude.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("device:", device)
 
     ds = HipMRIDataset(args.data_root, image_size=args.image_size, max_slices_per_volume=args.max_slices, recursive=True)
@@ -23,10 +23,10 @@ def train_loop(args):
     train_loader = DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=args.workers, pin_memory=True)
     val_loader = DataLoader(val_set, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
-    model = VQVAE(in_ch=1, hidden=args.hidden, z_channels=args.z_channels, num_embeddings=args.num_embeddings, beta=args.beta).to(device)
-    optimiser = optim.Adam(model.parameters90, lr=args.lr)
+    model = VQVAE(in_ch=1, hidden=args.hidden, z_channels=args.z_ch, num_embeddings=args.num_embeddings, beta=args.beta).to(device)
+    optimiser = optim.Adam(model.parameters(), lr=args.lr)
 
-    '''ensure_dir(args.output_dir)'''
+    ensure_dir(args.output_dir)
     best_ssim = 0.0
 
     for epoch in range(1, args.epochs + 1):
@@ -86,22 +86,22 @@ def train_loop(args):
 
     print("Training complete. Best SSIM:", best_ssim)
 
-    if __name__ == "__main__":
-        parser = argparse.ArgumentParser()
-        parser.add_argument("--data_root", type=str, required=True)
-        parser.add_argument("--output_dir", type=str, default="outputs")
-        parser.add_argument("--image_size", type=int, default=256)
-        parser.add_argument("--epochs", type=int, default=40)
-        parser.add_argument("--batch_size", type=int, default=8)
-        parser.add_argument("--lr", type=float, default=2e-4)
-        parser.add_argument("--z_ch", type=int, default=64)
-        parser.add_argument("--hidden", type=int, default=128)
-        parser.add_argument("--num_embeddings", type=int, default=512)
-        parser.add_argument("--beta", type=float, default=0.25)
-        parser.add_argument("--max_slices", type=int, default=40)
-        parser.add_argument("--val_frac", type=float, default=0.10)
-        parser.add_argument("--workers", type=int, default=2)
-        parser.add_argument("--save_every", type=int, default=10)
-        args = parser.parse_args()
-        ensure_dir(args.output_dir)
-        train_loop(args)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--data_root", type=str, required=True)
+    parser.add_argument("--output_dir", type=str, default="outputs")
+    parser.add_argument("--image_size", type=int, default=256)
+    parser.add_argument("--epochs", type=int, default=40)
+    parser.add_argument("--batch_size", type=int, default=8)
+    parser.add_argument("--lr", type=float, default=2e-4)
+    parser.add_argument("--z_ch", type=int, default=64)
+    parser.add_argument("--hidden", type=int, default=128)
+    parser.add_argument("--num_embeddings", type=int, default=512)
+    parser.add_argument("--beta", type=float, default=0.25)
+    parser.add_argument("--max_slices", type=int, default=40)
+    parser.add_argument("--val_frac", type=float, default=0.10)
+    parser.add_argument("--workers", type=int, default=2)
+    parser.add_argument("--save_every", type=int, default=10)
+    args = parser.parse_args()
+    ensure_dir(args.output_dir)
+    train_loop(args)

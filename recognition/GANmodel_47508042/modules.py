@@ -42,7 +42,7 @@ class VectorQuantizer(nn.Module):
         nn.init.uniform_(self.embedding.weight, -1.0 / self.num_embeddings, 1.0 / self.num_embeddings)
 
     def forward(self, z):
-        z_perm = z.permute(0, 2, 3, 1).contagious()
+        z_perm = z.permute(0, 2, 3, 1).contiguous()
         flat_z = z_perm.view(-1, self.embedding_dim)
 
         # compute distances
@@ -57,7 +57,7 @@ class VectorQuantizer(nn.Module):
         encodings.scatter_(1, encoding_indices, 1)
 
         # quantized
-        quantized = torch.matmul(encodings, self.embeddings.weights)
+        quantized = torch.matmul(encodings, self.embedding.weight)
         quantized = quantized.view(z_perm.shape)
         quantized = quantized.permute(0, 3, 1, 2).contiguous()
 
