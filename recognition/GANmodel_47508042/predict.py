@@ -7,9 +7,9 @@ from modules import VQVAE
 from utils import ensure_dir, save_pair_grid
 
 def visualise(checkpoint, data_root, output_dir, batch_size=8, max_slices=40):
-    device = torch.device('cude' if torch.cude.is_available() else 'cpu')
-    checkpoint = torch.load(checkpoint, map_location=device)
-    model = VQVAE(in_ch=1, hidden=128, z_ch=64, num_embeddings=512, beta=0.25).to(device)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    checkpoint = torch.load(checkpoint, map_location=device, weights_only=True)
+    model = VQVAE(in_ch=1, hidden=128, z_channels=64, num_embeddings=512, beta=0.25).to(device)
     model.load_state_dict(checkpoint['model_state'])
     model.eval()
 
