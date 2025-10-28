@@ -11,24 +11,29 @@ from dataset import HipMRIDataset
 from utils import ensure_dir, save_pair_grid, batch_ssim
 
 def train_loop(args):
+    """
+    main training loop for VQ-VAE on hip MRI dataset
+    """
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("device:", device)
 
     ds = HipMRIDataset(args.data_root, image_size=args.image_size, max_slices_per_volume=args.max_slices, recursive=True)
-    # split training and testing 90/10
+    # split training and testing
     n_val = max(1, int(len(ds) * args.val_frac))
     n_train = len(ds) - n_val
     train_set, val_set = random_split(ds, [n_train, n_val])
 
+    # data loaders
     train_loader = DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=args.workers, pin_memory=True)
     val_loader = DataLoader(val_set, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
-
     model = VQVAE(in_ch=1, hidden=args.hidden, z_channels=args.z_ch, num_embeddings=args.num_embeddings, beta=args.beta).to(device)
     optimiser = optim.Adam(model.parameters(), lr=args.lr)
 
+    # output directory
     ensure_dir(args.output_dir)
     best_ssim = 0.0
 
+    # training loop
     for epoch in range(1, args.epochs + 1):
         model.train()
         train_loss = 0.0

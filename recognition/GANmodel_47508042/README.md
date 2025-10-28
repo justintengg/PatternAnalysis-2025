@@ -9,15 +9,25 @@ reasonably clear images and reach SSIM > 0.6 on testing.
  - 'modules.py' - 'HipMRIDataset' loader
  - 'predict.py' - load best model and produce reconstructions
  - 'train.py' -  training loop, validation, checkpointing, plots
+ - 'utils.py' - helper functions for training and evaluation
+ - 'readme.md' - documentation
 
-## Requirements
-- Python 3.8+
-- PyTorch
-- torchvision
-- matplotlib
-- scikit-image
-- numpy
-
-Install:
+## Install:
 ```bash
-pip install torch torchvision matplotlib scikit-image numpy
+pip install torch torchvision matplotlib scikit-image numpy nibabel tqdm
+```
+
+## Training
+To train the model, run:
+```bash
+python3 train.py --data_root "/Users/justin/Downloads/HipMRIDataset"
+```
+
+## Prediction
+To generate reconstructions using the best model, run:
+```bash
+python3 predict.py --checkpoint outputs/best_checkpoint.pth --data_root "/Users/justin/Downloads/HipMRIDataset"
+```
+
+## Author
+Justin Teng (47508042)

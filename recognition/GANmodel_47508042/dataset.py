@@ -6,11 +6,14 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 
 class HipMRIDataset(Dataset):
+    """
+    dataset for loading 3D hip MRI volumes from NIfTI files and slicing them into 2D images.
+    """
     def __init__(self, root_dir, image_size=256, transform=None, max_slices_per_volume=None, recursive=True):
-        self.root_dir = root_dir
-        self.image_size = image_size
-        self.max_slices = max_slices_per_volume
-        self.recursive = recursive
+        self.root_dir = root_dir  # root directory containing NIfTI files
+        self.image_size = image_size  # size to resize images to
+        self.max_slices = max_slices_per_volume  # max number of slices to use per volume
+        self.recursive = recursive  # whether to search subdirectories
 
         # finding files
         self.files = self.collect_files()
@@ -36,23 +39,34 @@ class HipMRIDataset(Dataset):
                 self.index_map.append((f_idx, si))
 
     def collect_files(self):
+        """
+        collect all NIfTI files in the root directory (and subdirectories if recursive)
+        """
         exists = ('.nii', '.nii.gz')
         files = []
         if self.recursive:
+            # walk through subdirectories
             for root, _, filenames in os.walk(self.root_dir):
                 for fn in filenames:
                     if fn.lower().endswith(exists):
                         files.append(os.path.join(root, fn))
         else:
+            # only current directory
             for fn in os.listdir(self.root_dir):
                 if fn.lower().endswith(exists):
                     files.append(os.path.join(self.root_dir, fn))
         return sorted(files)
 
     def __len__(self):
+        """
+        returns the total number of 2D slices across all volumes
+        """
         return len(self.index_map)
 
     def __getitem__(self, index):
+        """
+        get the 2D slice at the given index
+        """
         file_index, slice_index = self.index_map[index]
         path = self.files[file_index]
         vol = nib.load(path).get_fdata()

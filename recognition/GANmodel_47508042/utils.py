@@ -1,8 +1,3 @@
-"""
-utils.py
-Helper functions: save images, compute SSIM, create folders.
-"""
-
 import os
 import torch
 import matplotlib.pyplot as plt

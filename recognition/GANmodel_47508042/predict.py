@@ -7,6 +7,9 @@ from modules import VQVAE
 from utils import ensure_dir, save_pair_grid
 
 def visualise(checkpoint, data_root, output_dir, batch_size=8, max_slices=40):
+    """
+    Visualise reconstructions from a trained VQ-VAE model
+    """
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     checkpoint = torch.load(checkpoint, map_location=device, weights_only=True)
     model = VQVAE(in_ch=1, hidden=128, z_channels=64, num_embeddings=512, beta=0.25).to(device)
@@ -33,4 +36,5 @@ if __name__ == "__main__":
     parser.add_argument("--batch_size", type=int, default=8)
     parser.add_argument("--max_slices", type=int, default=40)
     args = parser.parse_args()
+    # run visualisation
     visualise(args.checkpoint, args.data_root, args.output_dir, args.batch_size, args.max_slices)
